@@ -1,6 +1,7 @@
-noseY="";
-noseX="";
+wristY="";
+wristX="";
 Gamestatus="";
+game_status="";
 /*created by prashant shukla */
 
 var paddle2 =10,paddle1=10;
@@ -22,10 +23,14 @@ var ball = {
     dx:3,
     dy:3
 }
+function preload(){
+  paddle_hit=loadSound("ball_touch_paddle.wav");
+  ball_missed=loadSound("missed.wav")
+}
 
 function setup(){
-  var canvas =  createCanvas(700,600);
-  var canavs.parent('canvas'); 
+   canvas =  createCanvas(700,600);
+   canavs.parent('canvas'); 
   video=createCapture(VIDEO);
   video.size(800,400);
   video.parent('game_console');
@@ -41,14 +46,21 @@ function modelloaded(){
 function gotposes(results){
 	if(results.length>0){
 		console.log(results);
-	  noseX=results[0].pose.nose.x;
-	  noseY=results[0].pose.nose.y;
+	  wristX=results[0].pose.wrist.x;
+	  wristY=results[0].pose.wrist.y;
 	}
   }
 
+  function startgame(){
+    game_status="start";
+    document.getElementById("status").innerHTML="game is loading";
+  }
 
 function draw(){
 
+  if(game_status == "start"){
+    text()
+  }
  background(0); 
 
  fill("black");
@@ -66,7 +78,7 @@ function draw(){
    fill(250,0,0);
     stroke(0,0,250);
     strokeWeight(0.5);
-   paddle1Y = mouseY; 
+   paddle1Y = wristY; 
    rect(paddle1X,paddle1Y,paddle1,paddle1Height,100);
    
    
@@ -138,6 +150,8 @@ function move(){
   if (ball.x-2.5*ball.r/2< 0){
   if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
     ball.dx = -ball.dx+0.5; 
+    paddle_hit.play();
+    ball_missed.play();
   }
   else{
     pcscore++;
@@ -153,7 +167,7 @@ if(pcscore ==4){
     stroke("white");
     textSize(25)
     text("Game Over!☹☹",width/2,height/2);
-    text("Reload The Page!",width/2,height/2+30)
+    text("press restart button to play again",width/2,height/2+30)
     noLoop();
     pcscore = 0;
 }
@@ -176,10 +190,10 @@ function models(){
 
 //this function help to not go te paddle out of canvas
 function paddleInCanvas(){
-  if(mouseY+paddle1Height > height){
-    mouseY=height-paddle1Height;
+  if(wristY+paddle1Height > height){
+    wristY=height-paddle1Height;
   }
-  if(mouseY < 0){
-    mouseY =0;
+  if(wristY < 0){
+    mwristY =0;
   }  
 }
